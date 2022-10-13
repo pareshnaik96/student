@@ -2,7 +2,6 @@ const studentModel = require('../Models/studentModel')
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
-// const mongoose = require('mongoose')
 
 const isValid = function (value) {
     if (typeof value == "undefined" || value == null) return false;
@@ -13,10 +12,6 @@ const isValid = function (value) {
 const isvalidRequestBody = function (requestbody) {
     return Object.keys(requestbody).length > 0;
   }
-  
-//   const isValidObjectId = function (ObjectId) {
-//     return mongoose.Types.ObjectId.isValid(ObjectId)
-// }
 
 const isValid1 = function (name) {                                                              
     let nameRegex = /^[a-zA-Z ]{2,}$/
