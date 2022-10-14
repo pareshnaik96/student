@@ -85,12 +85,12 @@ const createStudent = async function (req, res) {
             }
             if (!isValid(email)) {
                 return res.status(400).send({ status: false, message: "email is required" });
-           }
-           if (!isValid4(email)) {
+            }
+            if (!isValid4(email)) {
                 return res.status(400).send({ status: false, message: "please enter valid email" });
-           }
+            }
        
-           let uniqueEmail = await userModel.findOne({ email });
+           let uniqueEmail = await studentModel.findOne({ email });
            if (uniqueEmail){
                 return res.status(400).send({ status: false, message: "email already exist" });
            }
@@ -241,14 +241,12 @@ const deleteStudent = async function (req, res) {
     try {
 
         let studentId = req.params.studentId;
-        console.log(studentId)
 
         if (!isValidObjectId(studentId)) {
             return res.status(400).send({ status: false, message: "Student Id is  Invalid" })
         }
 
         let studentdata = await studentModel.findOne({ _id: studentId, isDeleted: false });
-        console.log(studentdata)
 
         if (!studentdata) {
             return res.status(404).send({ status: false, message: "Student Data Not found" });
