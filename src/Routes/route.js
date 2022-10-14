@@ -1,16 +1,14 @@
 const express = require('express')
 const router = express.Router()
 const studentController = require('../Controllers/studentController')
-const subjectController = require('../Controllers/subjectController')
 const middleware = require('../Middleware/auth')
 
 
 router.post('/register',studentController.createStudent)
-router.post('/login',studentController.loginStudent)
+router.post('/login',studentController.login)
 
-router.post('/subject/:studentId',middleware.authentication,middleware.authorization,subjectController.createSubject )
-router.get('/student',middleware.authentication,subjectController.getStudent)
-router.put('/student/:subjectId',middleware.authentication,middleware.authorization,subjectController.updateSubject)
-router.delete('/student/:subjectId',middleware.authentication,middleware.authorization,subjectController.deleteSubject)
+router.get('/student',middleware.authentication,studentController.getStudent)
+router.put('/student/:studentId',middleware.authentication,middleware.authorization,studentController.updateStudent)
+router.delete('student/:studentId',middleware.authentication,middleware.authorization,studentController.deleteStudent)
 
 module.exports = router;

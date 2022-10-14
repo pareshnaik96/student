@@ -1,9 +1,18 @@
 const mongoose = require('mongoose')
 
+
 const studentSchema = mongoose.Schema(
     {
         name:{
             type:String,
+            trim:true
+        },
+        subject:{
+            type:String,
+            trim:true
+        },
+        mark:{
+            type:Number,
             trim:true
         },
         email:{
@@ -14,6 +23,10 @@ const studentSchema = mongoose.Schema(
         password:{
             type:String,
             trim:true
+        },
+        deletedAt: {
+            type: Date,
+            default:null
         },
         isDeleted: {
             type: Boolean,
