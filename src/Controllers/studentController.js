@@ -137,21 +137,21 @@ const login = async function (req,res) {
             return res.status(400).send({ status: false, message: "email is not valid" });
         }
     
-        const checkedUser = await studentModel.findOne({ email });
-        if (!checkedUser) {
+        const checkedStudent = await studentModel.findOne({ email });
+        if (!checkedStudent) {
             return res.status(404).send({ status: false, message: "No Student with this emailId" });
         }
         
-        let userId = checkedUser._id.toString()
+        let studentId = checkedStudent._id.toString()
         
-        const match = await bcrypt.compare(password, checkedUser.password);
+        const match = await bcrypt.compare(password, checkedStudent.password);
         if (!match) {
             return res.status(400).send({ status: false, message: "password wrong" });
         }
 
         //To create token
         let token = jwt.sign({
-            userId: userId,
+            userId: studentId,
             iat: Math.floor(Date.now() / 1000),
             exp: Math.floor(Date.now() / 1000) + 10*60*60
         }, "student@key");
@@ -203,6 +203,29 @@ const getStudent = async function (req, res) {
 //====================================================================================================================//
 
 
+const getStudentById = async function (req, res) {
+
+    try {
+  
+        let studentId = req.params.studentId
+  
+        if (!isValidObjectId(studentId)) return res.status(400).send({ status: false, message: "student Id is invalid" })
+  
+        let findStudent = await studentModel.findOne({ _id: studentId, isDeleted: false })
+  
+        if (!findStudent) return res.status(404).send({ status: false, message: "Student Not Found" })
+  
+        return res.status(200).send({ status: true, message: "Student details", data: findStudent })
+  
+    } catch (error) {
+        return res.status(500).send({ status: false, Error: error.message })
+    }
+  
+  }
+
+//====================================================================================================================//
+
+
 const updateStudent = async function (req, res) {
 
     try {
@@ -236,17 +259,18 @@ const updateStudent = async function (req, res) {
 //========================================================================================================================//
 
 
-const deleteStudent = async function (req, res) {
+const deleteStudent = async function (req,res) {
 
     try {
 
         let studentId = req.params.studentId;
+        console.log(studentId)
 
         if (!isValidObjectId(studentId)) {
             return res.status(400).send({ status: false, message: "Student Id is  Invalid" })
         }
 
-        let studentdata = await studentModel.findOne({ _id: studentId, isDeleted: false });
+        let studentdata = await studentModel.findOne({_id: studentId, isDeleted: false });
 
         if (!studentdata) {
             return res.status(404).send({ status: false, message: "Student Data Not found" });
@@ -265,5 +289,6 @@ const deleteStudent = async function (req, res) {
 module.exports.createStudent = createStudent
 module.exports.login=login
 module.exports.getStudent = getStudent
+module.exports.getStudentById = getStudentById
 module.exports.updateStudent = updateStudent
 module.exports.deleteStudent = deleteStudent

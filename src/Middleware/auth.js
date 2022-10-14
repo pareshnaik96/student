@@ -39,7 +39,7 @@ const authorization = async function (req, res, next) {
        
            if (decodeToken.userId == studentId) 
            next()
-           else return res.status(401).send({ status: false, message: "unauthorized.You are not authorize to perform the action." })
+           else return res.status(403).send({ status: false, message: "unauthorized.You are not authorize to perform the action." })
 
     }
     catch (error) {
