@@ -48,22 +48,23 @@ const createStudent = async function (req, res) {
 
         if (!isvalidRequestBody(data)) {
             return res.status(400).send({ status: false, message: "data not found" });
+        }
 
-        } else {
+        const { name, subject, mark, email, password } = data;
 
-            const { name, subject, mark, email, password } = data;
+        const findData = await studentModel.findOne({ name:name, subject:subject })
 
-            const findData = await studentModel.findOne({ name, subject })
             let newMarks = 0
             if (findData) {
                 const findMarks = findData.mark
                 newMarks = findMarks + mark
-            }
+            
 
             let updatedMark = await studentModel.findOneAndUpdate({ name: name, subject: subject }, { $set: { mark: newMarks } }, { new: true }).select({ "items._id": 0, __v: 0 })
-            if (updatedMark) {
+           
                 return res.status(200).send({ status: true, message: "mark is added", data: updatedMark })
-            }
+            
+            }else{
 
             if (!isValid(name)) {
                 return res.status(400).send({ status: false, message: "name is required" });
@@ -90,26 +91,27 @@ const createStudent = async function (req, res) {
                 return res.status(400).send({ status: false, message: "please enter valid email" });
             }
        
-           let uniqueEmail = await studentModel.findOne({ email });
-           if (uniqueEmail){
+            let uniqueEmail = await studentModel.findOne({ email });
+            if (uniqueEmail){
                 return res.status(400).send({ status: false, message: "email already exist" });
-           }
+            }
        
-           if (!isValid(password)) {
+            if (!isValid(password)) {
                return res.status(400).send({ status: false, message: "password is required" });
-           }
-           if (password.length < 8 || password.length > 15) {
+            }
+            if (password.length < 8 || password.length > 15) {
                return res.status(400).send({ status: false, message: "password must be 8-15 characters" });
-           }
+            }
            
-           const saltRounds = 10
-           Password = await bcrypt.hash(password, saltRounds);
+            const saltRounds = 10
+            Password = await bcrypt.hash(password, saltRounds);
            
-           const saveData = { name:name, subject:subject, mark:mark, email:email, password:Password }
+            const saveData = { name:name, subject:subject, mark:mark, email:email, password:Password }
             
             let Student = await studentModel.create(saveData)
             return res.status(201).send({ status: true, message: "Student created successfully", data: Student})
         }
+    
 
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
@@ -155,7 +157,7 @@ const login = async function (req,res) {
             iat: Math.floor(Date.now() / 1000),
             exp: Math.floor(Date.now() / 1000) + 10*60*60
         }, "student@key");
-
+        
         res.setHeader("x-api-key", token);
         return res.status(200).send({ status: true, message: "Student login sucessfull", data: token })
     }
@@ -264,7 +266,6 @@ const deleteStudent = async function (req,res) {
     try {
 
         let studentId = req.params.studentId;
-        console.log(studentId)
 
         if (!isValidObjectId(studentId)) {
             return res.status(400).send({ status: false, message: "Student Id is  Invalid" })
